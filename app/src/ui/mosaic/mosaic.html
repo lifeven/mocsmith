@@ -1,0 +1,168 @@
+<!-- #mosaic page markup, mounted into <section id="mosaic"> by src/ui/pages.mjs.
+     Laid out like the 3D result page: the name card over the photo and the mosaic, a toolbar under
+     them, and a drawer with one group of settings at a time (尺寸 / 颜色 / 零件 / 立体 / 导出; ui/mosaic/drawer.mjs).
+     Icons are Lucide 1.55.0 (ISC License, public/third-party-notices.txt), copied as inline SVG. -->
+<div class="mosaic-stage">
+  <div class="name-card">
+    <div class="name-row">
+      <h1 id="mosaic-title"></h1>
+      <button id="mosaic-details-toggle" type="button" class="info-button" aria-expanded="false" aria-controls="mosaic-details-pop" aria-label="拼画信息" data-i18n-aria="mosaic.info">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      </button>
+    </div>
+    <p id="mosaic-summary" class="summary stats"></p>
+    <div id="mosaic-details-pop" class="details-pop" role="dialog" aria-label="拼画信息" data-i18n-aria="mosaic.info" hidden>
+      <button id="mosaic-details-close" type="button" class="drawer-close" aria-label="关闭" data-i18n-aria="result.drawer.close">×</button>
+      <dl id="mosaic-details" class="details"></dl>
+      <p class="note" data-i18n="mosaic.private">照片只在这个网页里处理，没有发到任何地方。</p>
+    </div>
+  </div>
+  <div class="mosaic-view">
+    <figure class="mosaic-pane">
+      <figcaption id="mosaic-source-caption">原图（用到的部分）</figcaption>
+      <canvas id="mosaic-source" aria-hidden="true"></canvas>
+      <div class="frame-tools">
+        <button id="mosaic-frame" type="button" class="button" aria-pressed="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>
+          <span id="mosaic-frame-label">框选一块</span>
+        </button>
+        <button id="mosaic-whole" type="button" class="button quiet" hidden>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          <span data-i18n="mosaic.frame.whole">用整张照片</span>
+        </button>
+      </div>
+      <p id="mosaic-frame-note" class="note" data-i18n="mosaic.frame.note" hidden>在框里拖动是移动，拖四个角改大小，在框外拖一下重新框；框的长宽决定拼画是几乘几。键盘：方向键移动，Shift + 方向键改大小，Esc 结束。</p>
+    </figure>
+    <figure class="mosaic-pane">
+      <figcaption data-i18n="mosaic.bricks">积木拼画</figcaption>
+      <canvas id="mosaic-canvas" role="img"></canvas>
+    </figure>
+  </div>
+  <nav id="mosaic-tools" class="tools" aria-label="调整拼画" data-i18n-aria="mosaic.tools.aria">
+    <button type="button" class="tool" data-group="size" aria-expanded="false" aria-controls="mosaic-drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+      <span class="tool-name" data-i18n="result.group.size">尺寸</span>
+    </button>
+    <button type="button" class="tool" data-group="colour" aria-expanded="false" aria-controls="mosaic-drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+      <span class="tool-name" data-i18n="result.group.colour">颜色</span>
+    </button>
+    <button type="button" class="tool" data-group="parts" aria-expanded="false" aria-controls="mosaic-drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2"/><rect x="14" y="2" width="8" height="8" rx="1"/></svg>
+      <span class="tool-name" data-i18n="result.group.parts">零件</span>
+    </button>
+    <button type="button" class="tool" data-group="relief" aria-expanded="false" aria-controls="mosaic-drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+      <span class="tool-name" data-i18n="mosaic.group.relief">立体</span>
+    </button>
+    <button type="button" class="tool" data-group="export" aria-expanded="false" aria-controls="mosaic-drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+      <span class="tool-name" data-i18n="result.group.export">导出</span>
+    </button>
+  </nav>
+</div>
+
+<aside id="mosaic-drawer" class="panel drawer" aria-labelledby="mosaic-drawer-title" hidden>
+  <div class="drawer-h">
+    <h2 id="mosaic-drawer-title"></h2>
+    <button id="mosaic-drawer-close" type="button" class="drawer-close" aria-label="关闭" data-i18n-aria="result.drawer.close">×</button>
+  </div>
+  <div class="drawer-body">
+
+    <div class="group" data-group="size" hidden>
+      <section class="panel-card">
+        <h3 class="group-h" data-i18n="mosaic.size">大小（长边多少颗凸点）</h3>
+        <div id="mosaic-sizes" class="seg" role="group" aria-label="大小" data-i18n-aria="mosaic.size"></div>
+        <p class="note" data-i18n="mosaic.size.frame">只想拼照片的一部分：点照片下面的「框选一块」。</p>
+      </section>
+    </div>
+
+    <div class="group" data-group="colour" hidden>
+      <section class="panel-card">
+        <h3 id="mosaic-colour-total" class="group-title"></h3>
+        <ul id="mosaic-legend" class="parts"></ul>
+      </section>
+      <section class="panel-card">
+        <h3 class="group-h" data-i18n="result.colour.settings">颜色设置</h3>
+        <p id="mosaic-colours-label" class="field" data-i18n="mosaic.colours">最多几种颜色</p>
+        <div id="mosaic-colours" class="seg caps" role="group" aria-labelledby="mosaic-colours-label"></div>
+        <div class="set-h dither-h">
+          <p id="mosaic-dither-label" class="field" data-i18n="mosaic.dither">抖动</p>
+          <button type="button" class="help-toggle" aria-expanded="false" aria-controls="help-dither" aria-label="这是什么" data-i18n-aria="result.help"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+        </div>
+        <p id="help-dither" class="help" hidden data-i18n="mosaic.dither.note">抖动让渐变更顺，但照片上会多出别的颜色的杂点。Floyd–Steinberg 渐变更顺，Atkinson 更锐利；默认不抖动。</p>
+        <div id="mosaic-dither" class="seg" role="group" aria-labelledby="mosaic-dither-label"></div>
+        <p id="mosaic-colour-locked" class="note" data-i18n="mosaic.colours.locked" hidden>用「只用我有的套装」时，颜色数和抖动不能调：两样都会改每种颜色的用量。</p>
+      </section>
+    </div>
+
+    <div class="group" data-group="parts" hidden>
+      <section class="panel-card">
+        <h3 class="group-h" data-i18n="mosaic.part">表面零件</h3>
+        <div id="mosaic-parts" class="tiers two"></div>
+        <h3 class="group-h base-h" data-i18n="mosaic.base">底板</h3>
+        <div id="mosaic-bases" class="tiers one"></div>
+        <p id="mosaic-base-note" class="note"></p>
+        <ul id="mosaic-base-parts" class="parts base-parts"></ul>
+      </section>
+      <section id="mosaic-own" class="panel-card own-block">
+        <h3 class="group-h" data-i18n="mosaic.own">只用我有的套装</h3>
+        <p id="mosaic-own-summary" class="own-state"></p>
+        <p class="note" data-i18n="mosaic.own.note">勾上手里有的 LEGO Art 套装，或者搜别的套装（同一个可以加几盒），每种颜色就不会用得比这些盒子里多；不够的列成要另买的。</p>
+        <p id="mosaic-sets-label" class="field" data-i18n="mosaic.own.art">LEGO Art 套装</p>
+        <div id="mosaic-sets" class="art-sets"></div>
+        <label class="field" for="mosaic-own-search" data-i18n="sets.search">加一个套装</label>
+        <input id="mosaic-own-search" class="own-search" type="search" autocomplete="off" spellcheck="false" aria-describedby="mosaic-own-search-status">
+        <ul id="mosaic-own-results" class="own-results" hidden></ul>
+        <p id="mosaic-own-search-status" class="note" role="status" hidden></p>
+        <ul id="mosaic-own-added" class="own-list" hidden></ul>
+        <div id="mosaic-stock-mode-row" hidden>
+          <p id="mosaic-stock-mode-label" class="field" data-i18n="mosaic.stockMode">盒里的颜色不合适时</p>
+          <div id="mosaic-stock-modes" class="seg" role="group" aria-labelledby="mosaic-stock-mode-label"></div>
+        </div>
+        <p id="mosaic-own-status" class="note" role="status" hidden></p>
+        <p id="mosaic-own-warn" class="note warn" role="status" hidden></p>
+        <p class="note" data-i18n="sets.source">套装及库存数据来自 Rebrickable。</p>
+      </section>
+    </div>
+
+    <div class="group" data-group="relief" hidden>
+      <section class="panel-card">
+        <div class="set-row">
+          <label for="mosaic-relief" data-i18n="mosaic.relief.on">按照片里的远近，把近处垫高</label>
+          <button type="button" class="help-toggle" aria-expanded="false" aria-controls="help-relief" aria-label="这是什么" data-i18n-aria="result.help"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+          <input id="mosaic-relief" class="switch" type="checkbox">
+        </div>
+        <p id="help-relief" class="help" hidden data-i18n="mosaic.relief.note">近处的格子下面垫上黑色薄板，拼画就有高低。第一次用要从 Hugging Face 下载约 30 MB 的深度模型（Depth Anything V2）；照片还是只在这个网页里处理。</p>
+        <p class="note" data-i18n="mosaic.relief.size">第一次打开要下载约 30 MB 的深度模型。</p>
+        <div id="mosaic-relief-busy" class="relief-busy" role="status" hidden>
+          <span id="mosaic-relief-busy-text"></span>
+          <progress id="mosaic-relief-progress"></progress>
+          <button id="mosaic-relief-stop" type="button" class="button quiet" data-i18n="mosaic.relief.stop">停下</button>
+        </div>
+        <p id="mosaic-relief-status" class="note" role="status" hidden></p>
+        <p id="mosaic-relief-levels-label" class="field" data-i18n="mosaic.relief.levels">分几级</p>
+        <div id="mosaic-relief-levels" class="seg" role="group" aria-labelledby="mosaic-relief-levels-label"></div>
+        <div class="set-row">
+          <label for="mosaic-relief-mark" data-i18n="mosaic.relief.mark">在拼画上标出垫高的地方（越亮垫得越高）</label>
+          <input id="mosaic-relief-mark" class="switch" type="checkbox">
+        </div>
+      </section>
+    </div>
+
+    <div class="group" data-group="export" hidden>
+      <section class="panel-card">
+        <div class="exports">
+          <button id="mosaic-pdf" type="button" class="button primary"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg> <span data-i18n="mosaic.download.pdf">下载 PDF 说明书</span></button>
+          <button id="mosaic-ldr" type="button" class="button" data-i18n="mosaic.download.ldr">下载模型文件（.ldr）</button>
+          <button id="mosaic-csv" type="button" class="button" data-i18n="mosaic.download.csv">下载零件清单（.csv）</button>
+          <button id="mosaic-buy-csv" type="button" class="button" data-i18n="mosaic.download.buy" hidden>下载要另买的零件（.csv）</button>
+        </div>
+        <p id="mosaic-pdf-status" class="note" role="status" hidden></p>
+        <p class="note" data-i18n="mosaic.download.note">零件清单可以导入 Rebrickable；.ldr 能在 Studio、LeoCAD 里打开，先放底板，再每 16 × 16 一步。</p>
+        <p class="note" data-i18n="legal.trademark">LEGO® 是乐高集团的商标，乐高集团没有赞助、授权或认可本网站。</p>
+      </section>
+    </div>
+
+  </div>
+</aside>

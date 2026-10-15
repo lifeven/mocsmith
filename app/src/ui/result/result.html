@@ -1,0 +1,390 @@
+<!-- #result page markup, mounted into <section id="result"> by src/ui/pages.mjs. -->
+<div class="stage">
+  <canvas id="view" aria-label="积木模型的 3D 视图。拖动旋转，滚轮或双指缩放" data-i18n-aria="result.view.aria"></canvas>
+  <!-- Name card, mode buttons and the "not connected" banner stack in one column, so the banner always
+       sits below the buttons however they wrap; on wide screens the name card moves to the top right. -->
+  <div class="stage-top">
+    <div class="name-card">
+      <div class="name-row">
+        <h1 id="model-title">模型</h1>
+        <button id="details-toggle" type="button" class="info-button" aria-expanded="false" aria-controls="details-pop" aria-label="模型信息" data-i18n-aria="result.info.model">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </button>
+      </div>
+      <p id="summary" class="summary stats"></p>
+      <!-- A model read from a file: shown as it is, and which parts could not be read. -->
+      <p id="import-note" class="card-note" hidden></p>
+      <!-- What applies to the whole model (size, joins, part kinds, timing) opens from the ⓘ beside the name. -->
+      <div id="details-pop" class="details-pop" role="dialog" aria-label="模型信息" data-i18n-aria="result.info.model" hidden>
+        <button id="details-close" type="button" class="drawer-close" aria-label="关闭" data-i18n-aria="result.drawer.close">×</button>
+        <dl id="details" class="details"></dl>
+      </div>
+    </div>
+    <div class="modes" role="group" aria-label="怎么看" data-i18n-aria="result.modes.aria">
+      <button id="mode-compare" type="button" class="generated" data-mode="compare" aria-pressed="false">对比原模型</button>
+      <button id="mode-edit" type="button" data-mode="edit" aria-pressed="false">编辑零件</button>
+      <button id="mode-build" type="button" data-mode="layers" aria-pressed="false">开始搭建</button>
+    </div>
+    <div id="issue-banner" class="banner" hidden role="status">
+      <span id="issue-text"></span>
+      <span id="issue-short" class="issue-short"></span>
+      <button id="issue-where" type="button">在哪</button>
+    </div>
+    <div id="move-bar" class="move-bar" hidden role="status">
+      <span id="move-text"></span>
+      <button id="move-cancel" type="button" data-i18n="result.cancel">取消</button>
+    </div>
+  </div>
+  <button id="book-quick" type="button" class="book-quick" hidden aria-label="搭建说明书（PDF）" data-i18n-aria="result.book.quick">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg>
+    <span data-i18n="result.book.quickShort">说明书</span>
+  </button>
+  <p class="compare-label compare-source" aria-hidden="true" data-i18n="result.compare.source">原来的模型</p>
+  <p class="compare-label compare-bricks" aria-hidden="true" data-i18n="result.compare.bricks">积木</p>
+  <!-- Build mode: one card laid out like a step of a printed instruction book (step number,
+       the parts box, previous / next), notes as tags under it, the progress slider at the bottom. -->
+  <div id="layer-bar" class="layer-bar" hidden>
+    <div class="step-head">
+      <button id="step-prev" class="step-arrow" type="button" aria-label="上一步" data-i18n-aria="result.step.prev"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+      <p class="step-num" aria-hidden="true"><strong id="step-num">1</strong><span id="step-total">/ 1</span></p>
+      <ul id="step-needs" class="step-needs" aria-label="这一步要的零件" data-i18n-aria="result.step.needs"></ul>
+      <button id="step-next" class="step-arrow next" type="button" aria-label="下一步" data-i18n-aria="result.step.next"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
+    <div class="step-meta">
+      <p id="step-note" class="step-note" hidden></p>
+      <p id="step-view" class="step-chip" hidden data-i18n="result.step.fromBack">这一步从背面看</p>
+      <button id="step-follow" class="step-follow" type="button" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="result.step.follow">镜头重新跟着每一步</span></button>
+      <button id="step-full" class="step-follow" type="button" aria-pressed="false" hidden><svg class="when-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="when-on" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span>全屏</span></button>
+    </div>
+    <label for="layer" id="layer-label" class="visually-hidden">第 1 步</label>
+    <input id="layer" type="range" min="0" max="1" step="1" value="1">
+  </div>
+  <div id="busy" class="busy" hidden data-i18n="result.busy">正在重新搭…</div>
+  <div id="nudge-bar" class="nudge-bar" hidden role="group" aria-label="调整位置" data-i18n-aria="result.nudge.aria">
+    <button type="button" data-nudge="left" aria-label="往左一格" data-i18n-aria="result.nudge.left">←</button>
+    <button type="button" data-nudge="up" aria-label="往里一格" data-i18n-aria="result.nudge.up">↑</button>
+    <button type="button" data-nudge="down" aria-label="往外一格" data-i18n-aria="result.nudge.down">↓</button>
+    <button type="button" data-nudge="right" aria-label="往右一格" data-i18n-aria="result.nudge.right">→</button>
+    <button id="nudge-turn" type="button" data-i18n="result.nudge.turn">转</button>
+    <button id="nudge-place" type="button" class="primary" data-i18n="result.nudge.place">放下</button>
+    <button id="nudge-cancel" type="button" data-i18n="result.cancel">取消</button>
+  </div>
+  <p class="gesture" data-i18n="result.gesture">拖动旋转 · 双指或滚轮缩放</p>
+  <!-- 编辑零件 → 选择: a small bar beside the picked part, for the four things done to it most (ui/result/part-float.mjs). -->
+  <div id="part-float" class="part-float" role="toolbar" aria-label="这块零件" data-i18n-aria="result.float.aria" hidden>
+    <button id="float-move" type="button" aria-label="移动" data-i18n-aria="result.edit.move">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20"/><path d="m15 19-3 3-3-3"/><path d="m19 9 3 3-3 3"/><path d="M2 12h20"/><path d="m5 9-3 3 3 3"/><path d="m9 5 3-3 3 3"/></svg>
+    </button>
+    <button id="float-turn" type="button" aria-label="转 90°" data-i18n-aria="result.edit.turn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+    </button>
+    <button id="float-paint" type="button" aria-label="换颜色" data-i18n-aria="result.float.paint">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.622 17.897-10.68-2.913"/><path d="M18.376 2.622a1 1 0 1 1 3.002 3.002L17.36 9.643a.5.5 0 0 0 0 .707l.944.944a2.41 2.41 0 0 1 0 3.408l-.944.944a.5.5 0 0 1-.707 0L8.354 7.348a.5.5 0 0 1 0-.707l.944-.944a2.41 2.41 0 0 1 3.408 0l.944.944a.5.5 0 0 0 .707 0z"/><path d="M9 8c-1.804 2.71-3.97 3.46-6.583 3.948a.507.507 0 0 0-.302.819l7.32 8.883a1 1 0 0 0 1.185.204C12.735 20.405 16 16.792 16 15"/></svg>
+    </button>
+    <button id="float-delete" type="button" class="danger" aria-label="删掉这块" data-i18n-aria="result.edit.delete">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+    </button>
+  </div>
+  <!-- The toolbar: one button per group of settings, opening it in the drawer (ui/result/drawer.mjs);
+       the name card above already shows the counts. Size is hidden for .ldr models and while editing.
+       Icons on this page are Lucide 1.55.0 (ISC License, public/third-party-notices.txt), copied as inline SVG. -->
+  <nav id="tools" class="tools" aria-label="调整模型" data-i18n-aria="result.tools.aria">
+    <button type="button" class="tool generated relays" data-group="size" aria-expanded="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+      <span class="tool-name" data-i18n="result.group.size">尺寸</span>
+    </button>
+    <button type="button" class="tool" data-group="colour" aria-expanded="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+      <span class="tool-name" data-i18n="result.group.colour">颜色</span>
+    </button>
+    <button type="button" class="tool" data-group="parts" aria-expanded="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2"/><rect x="14" y="2" width="8" height="8" rx="1"/></svg>
+      <span class="tool-name" data-i18n="result.group.parts">零件</span>
+    </button>
+    <button type="button" class="tool" data-group="structure" aria-expanded="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <span class="tool-name" data-i18n="result.group.structure">结构</span>
+    </button>
+    <button type="button" class="tool" data-group="export" aria-expanded="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+      <span class="tool-name" data-i18n="result.group.export">导出</span>
+    </button>
+  </nav>
+  <!-- 「编辑零件」 swaps the toolbar for its own tools (ui/result/edit-tools.mjs): the drawer shows the panel
+       of the tool that is on. Another tap on the tool that is on puts the panel away; the tool stays on. -->
+  <nav id="edit-tools" class="tools edit-tools" aria-label="编辑零件的工具" data-i18n-aria="result.editTools.aria" hidden>
+    <button type="button" class="tool" data-tool="select" aria-pressed="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"/></svg>
+      <span class="tool-name" data-i18n="result.tool.select">选择</span>
+    </button>
+    <button type="button" class="tool" data-tool="add" aria-pressed="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+      <span class="tool-name has-short" data-i18n="result.tool.add">加零件</span>
+      <span class="tool-name tool-short" aria-hidden="true" data-i18n="result.tool.addShort">加零件</span>
+    </button>
+    <button type="button" class="tool" data-tool="paint" aria-pressed="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.622 17.897-10.68-2.913"/><path d="M18.376 2.622a1 1 0 1 1 3.002 3.002L17.36 9.643a.5.5 0 0 0 0 .707l.944.944a2.41 2.41 0 0 1 0 3.408l-.944.944a.5.5 0 0 1-.707 0L8.354 7.348a.5.5 0 0 1 0-.707l.944-.944a2.41 2.41 0 0 1 3.408 0l.944.944a.5.5 0 0 0 .707 0z"/><path d="M9 8c-1.804 2.71-3.97 3.46-6.583 3.948a.507.507 0 0 0-.302.819l7.32 8.883a1 1 0 0 0 1.185.204C12.735 20.405 16 16.792 16 15"/></svg>
+      <span class="tool-name" data-i18n="result.tool.paint">上色</span>
+    </button>
+    <button type="button" class="tool" data-tool="move" aria-pressed="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20"/><path d="m15 19-3 3-3-3"/><path d="m19 9 3 3-3 3"/><path d="M2 12h20"/><path d="m5 9-3 3 3 3"/><path d="m9 5 3-3 3 3"/></svg>
+      <span class="tool-name" data-i18n="result.tool.move">移动</span>
+    </button>
+    <button type="button" class="tool" data-tool="delete" aria-pressed="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      <span class="tool-name" data-i18n="result.tool.delete">删除</span>
+    </button>
+    <span class="tool-sep" aria-hidden="true"></span>
+    <button id="edit-undo" type="button" class="tool" disabled>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+      <span class="tool-name" data-i18n="result.undo">撤销</span>
+    </button>
+    <button id="edit-redo" type="button" class="tool" disabled>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+      <span class="tool-name" data-i18n="result.redo">重做</span>
+    </button>
+    <button type="button" class="tool" data-tool="history" aria-pressed="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+      <span class="tool-name has-short" data-i18n="result.tool.history">记录</span>
+      <span class="tool-name tool-short" aria-hidden="true" data-i18n="result.tool.historyShort">记录</span>
+    </button>
+  </nav>
+</div>
+
+<!-- The drawer: one group at a time (尺寸 / 颜色 / 零件 / 结构 / 导出); on the right on wide screens,
+     under the model on phones. In 「编辑零件」 the toolbar becomes the edit tools and the drawer shows the tool's panel. -->
+<aside id="drawer" class="panel drawer" aria-labelledby="drawer-title" hidden>
+  <div class="drawer-h">
+    <h2 id="drawer-title"></h2>
+    <button id="drawer-close" type="button" class="drawer-close" aria-label="关闭" data-i18n-aria="result.drawer.close">×</button>
+  </div>
+  <div class="drawer-body">
+    <!-- Notes about the whole model that any change of setting affects: shown whichever group is open. -->
+    <p id="edit-note" class="drawer-note" role="status" hidden></p>
+    <p id="paint-note" class="drawer-note" role="status" hidden></p>
+
+    <div class="group" data-group="size" hidden>
+      <section class="panel-card">
+        <h3 class="group-h" data-i18n="result.size.presets">常用大小</h3>
+        <div id="tiers" class="seg size generated relays" role="group" aria-label="大小" data-i18n-aria="result.size"></div>
+        <label for="size" class="field generated relays"><span data-i18n="result.tune.length">精确长度</span> <span id="size-label" class="muted"></span></label>
+        <input id="size" class="generated relays" type="range" min="12" max="64" step="2" value="24">
+        <p class="note generated relays" data-i18n="result.tune.slow">超过 32 颗凸点的大模型要算零点几秒，松手后出结果。</p>
+      </section>
+    </div>
+
+    <div class="group" data-group="colour" hidden>
+      <section class="panel-card parts-card">
+        <div class="panel-card-h">
+          <h3 id="colour-total" class="group-title"></h3>
+          <div id="edit-bar" class="edit-bar end generated">
+            <button id="undo" type="button" disabled data-i18n="result.undo">撤销</button>
+            <button id="redo" type="button" disabled data-i18n="result.redo">重做</button>
+          </div>
+        </div>
+        <div id="parts-bar" class="colour-bar" aria-hidden="true"></div>
+        <ul id="parts-list" class="parts"></ul>
+        <!-- The colour / part card (ui/result/palette.mjs) sits here, or in the 选择 panel while editing parts. -->
+        <div id="colour-card-slot">
+        <div id="palette-pop" class="palette-pop" role="dialog" aria-labelledby="palette-title" hidden>
+          <div class="palette-head">
+            <p id="palette-title" class="palette-title"></p>
+            <button id="part-info-toggle" type="button" class="info-toggle" aria-expanded="false" aria-controls="part-info" aria-label="这块零件的编号和详细信息" data-i18n-aria="result.info.aria" hidden>?</button>
+          </div>
+          <dl id="part-info" class="part-info" hidden></dl>
+          <div id="part-edit" class="part-edit" hidden>
+            <div id="part-actions" class="part-actions">
+              <button id="part-move" type="button" class="button" data-i18n="result.edit.move">移动</button>
+              <button id="part-turn" type="button" class="button" data-i18n="result.edit.turn">转 90°</button>
+              <button id="part-delete" type="button" class="button danger" data-i18n="result.edit.delete">删掉这块</button>
+            </div>
+            <p id="part-turn-why" class="note" hidden></p>
+            <p id="part-covered" class="note" hidden></p>
+            <p class="note" data-i18n="result.edit.recolour">或者只给这一块换颜色（灰掉的是 LEGO 没出过的）：</p>
+          </div>
+          <div id="palette-grid" class="palette-grid"></div>
+          <button id="palette-close" type="button" class="palette-close" data-i18n="result.cancel">取消</button>
+        </div>
+        </div>
+        <p class="note generated relays" data-i18n="result.recolour.hint">点一种颜色可以整个换掉；在模型上点一块，只换那一块。</p>
+      </section>
+      <section class="panel-card generated relays">
+        <h3 class="group-h" data-i18n="result.colour.settings">颜色设置</h3>
+        <div class="set-h">
+          <p id="max-colours-label" class="field" data-i18n="result.tune.colours">最多用几种颜色</p>
+          <button type="button" class="help-toggle" aria-expanded="false" aria-controls="help-colours" aria-label="这是什么" data-i18n-aria="result.help"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+        </div>
+        <p id="help-colours" class="help" hidden data-i18n="result.tune.coloursNote">颜色多了不好凑零件时用：用得少、和别的颜色接近的先并掉，眼睛这类小点留着。示例的颜色都是设计好的，所以默认不限。</p>
+        <div id="max-colours" class="seg caps" role="group" aria-labelledby="max-colours-label"></div>
+        <p id="colour-note" class="note" hidden></p>
+        <div class="set-row">
+          <label for="delight" data-i18n="result.tune.delight">去掉贴图里画上去的光影</label>
+          <button type="button" class="help-toggle" aria-expanded="false" aria-controls="help-delight" aria-label="这是什么" data-i18n-aria="result.help"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+          <input id="delight" class="switch" type="checkbox">
+        </div>
+        <p id="help-delight" class="help" hidden data-i18n="result.tune.delightNote">适合用照片生成的模型：同一块颜色背光的一面不会变成深一号的颜色。本来就设计成深浅两色的地方（比如深色屋顶）也可能被拉成一样，所以默认关着。</p>
+      </section>
+    </div>
+
+    <div class="group" data-group="parts" hidden>
+      <section class="panel-card generated relays">
+        <div class="set-h">
+          <h3 id="part-kinds-label" class="group-h" data-i18n="result.tune.parts">用哪些零件</h3>
+          <button type="button" class="help-toggle" aria-expanded="false" aria-controls="help-parts" aria-label="这是什么" data-i18n-aria="result.help"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+        </div>
+        <div id="help-parts" class="help" hidden>
+          <p data-i18n="result.tune.parts.always">砖和薄板一直会用，下面几种可以不用。</p>
+          <ul>
+            <li data-i18n="result.tune.part.tiles">光面板（顶上平的，没有凸点）</li>
+            <li data-i18n="result.tune.part.slopes">斜面砖（放在台阶的边上）</li>
+            <li data-i18n="result.tune.part.inverted">倒斜面（放在悬出去的底下）</li>
+            <li data-i18n="result.tune.part.round">圆零件（单独立着的 1×1、2×2 小柱子和点缀）</li>
+          </ul>
+        </div>
+        <div class="pills" role="group" aria-labelledby="part-kinds-label">
+          <label class="pill"><input type="checkbox" data-part="tiles" checked><svg class="pill-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="result.tune.partShort.tiles">光面板</span></label>
+          <label class="pill"><input type="checkbox" data-part="slopes" checked><svg class="pill-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="result.tune.partShort.slopes">斜面砖</span></label>
+          <label class="pill"><input type="checkbox" data-part="inverted" checked><svg class="pill-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="result.tune.partShort.inverted">倒斜面</span></label>
+          <label class="pill"><input type="checkbox" data-part="round" checked><svg class="pill-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="result.tune.partShort.round">圆零件</span></label>
+        </div>
+      </section>
+      <section id="own" class="panel-card own-block generated">
+        <h3 class="group-h" data-i18n="result.own">只用我有的零件</h3>
+        <p id="own-summary" class="own-state" tabindex="-1"></p>
+        <p class="note" data-i18n="result.own.note">搜你有的套装加进来（同一个套装可以加几盒），或者导入 Rebrickable 导出的零件清单。模型只用这些颜色，先用你有的零件，不够的列成要另买的。</p>
+        <label class="field" for="own-search" data-i18n="sets.search">加一个套装</label>
+        <input id="own-search" class="own-search" type="search" autocomplete="off" spellcheck="false" aria-describedby="own-search-status">
+        <ul id="own-results" class="own-results" hidden></ul>
+        <p id="own-search-status" class="note" role="status" hidden></p>
+        <ul id="own-added" class="own-list" hidden></ul>
+        <ul id="own-files" class="own-list" hidden></ul>
+        <div class="own-actions">
+          <label class="button" for="own-csv" data-i18n="result.own.csv">导入零件清单（.csv，可多选）</label>
+          <input id="own-csv" type="file" accept=".csv,text/csv" multiple class="visually-hidden">
+          <button id="own-clear" type="button" class="button" data-i18n="result.own.clear" hidden>全部移除</button>
+        </div>
+        <p id="own-csv-status" class="note" role="status" hidden></p>
+        <p id="own-status" class="note" role="status" hidden></p>
+        <p class="note" data-i18n="sets.source">套装及库存数据来自 Rebrickable。</p>
+      </section>
+    </div>
+
+    <div class="group" data-group="structure" hidden>
+      <section class="panel-card">
+        <div id="structure-status" class="structure-status">
+          <span id="structure-text"></span>
+          <button id="structure-where" type="button" class="button" hidden data-i18n="result.where">在哪</button>
+        </div>
+        <div class="set-row generated relays">
+          <label for="repair" data-i18n="result.tune.repair">把没连上的地方重新拼牢</label>
+          <input id="repair" class="switch" type="checkbox" checked>
+        </div>
+        <div class="set-row generated relays">
+          <label for="thicken" data-i18n="result.tune.thicken">把只有 1 颗凸点粗的柱子、腿加粗到 2 颗</label>
+          <button type="button" class="help-toggle" aria-expanded="false" aria-controls="help-thicken" aria-label="这是什么" data-i18n-aria="result.help"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+          <input id="thicken" class="switch" type="checkbox">
+        </div>
+        <p id="help-thicken" class="help generated relays" hidden data-i18n="result.tune.thickenNote">这样能用 2×2 的零件，不用一摞 1×1，更结实。会改变形状（往模型里面长，空隙不填），所以默认关着；1 颗凸点厚的墙本来就搭得牢，不加粗。</p>
+      </section>
+      <section class="panel-card">
+        <h3 class="group-h" data-i18n="result.marks">在模型上标出</h3>
+        <div class="set-row">
+          <label for="show-hanging"><span class="dot orange"></span><span data-i18n="result.tune.hangingShort">下面没托着的零件</span></label>
+          <button type="button" class="help-toggle" aria-expanded="false" aria-controls="help-hanging" aria-label="这是什么" data-i18n-aria="result.help"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+          <input id="show-hanging" class="switch" type="checkbox">
+        </div>
+        <p id="help-hanging" class="help" hidden data-i18n="result.tune.hangingHelp">多半是靠上面的零件吊着，不一定是错。</p>
+        <div class="set-row">
+          <label for="show-recoloured"><span class="dot purple"></span><span data-i18n="result.tune.recolouredShort">为了连牢换了颜色的地方</span></label>
+          <input id="show-recoloured" class="switch" type="checkbox">
+        </div>
+      </section>
+    </div>
+
+    <div class="group" data-group="export" hidden>
+      <section class="panel-card">
+        <div class="exports">
+          <button id="open-book" type="button" class="button primary" aria-haspopup="dialog"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg> <span data-i18n="result.book.open">看搭建说明书</span></button>
+          <button id="download-ldr" type="button" class="button" data-i18n="result.download.ldr">下载模型文件（.ldr）</button>
+          <button id="download-csv" type="button" class="button" data-i18n="result.download.csv">下载零件清单（.csv）</button>
+          <button id="download-buy" type="button" class="button" data-i18n="result.download.buy" hidden>下载要另买的零件（.csv）</button>
+        </div>
+        <p class="note" data-i18n="result.takeaway.note">模型文件可以用 Studio、LeoCAD 打开接着改，分步和搭建模式一样；零件清单可以导入 Rebrickable 找零件。</p>
+        <p class="note" data-i18n="legal.trademark">LEGO® 是乐高集团的商标，乐高集团没有赞助、授权或认可本网站。</p>
+      </section>
+    </div>
+
+    <!-- 「编辑零件」: one panel per tool of the edit toolbar (ui/result/edit-tools.mjs). -->
+    <div class="group" data-group="edit" hidden>
+      <div class="tool-panel" data-tool-panel="select">
+        <section id="select-empty" class="panel-card">
+          <p class="note" data-i18n="result.select.hint">在模型上点一块零件，就能移动、转向、换颜色或者删掉它。</p>
+          <p class="note" data-i18n="result.edit.hint">编辑时模型保持现在的样子，只改你动的那几块；有零件没连上会马上标红。</p>
+        </section>
+        <div id="edit-card-slot"></div>
+      </div>
+      <div class="tool-panel" data-tool-panel="add" hidden>
+        <section id="add-part" class="panel-card add-part">
+          <h3 class="group-h" data-i18n="result.add.title">加一块零件</h3>
+          <!-- The part library: kinds down the left, the chosen kind's sizes as a grid beside them. -->
+          <div class="add-lib">
+            <div id="add-kinds" class="add-kinds" role="group" aria-label="种类" data-i18n-aria="result.add.kind"></div>
+            <div id="add-sizes" class="add-sizes" role="group" aria-label="大小" data-i18n-aria="result.add.size"></div>
+          </div>
+          <div id="add-colours" class="add-colours" role="group" aria-label="颜色" data-i18n-aria="result.add.colour"></div>
+          <p id="add-colour-name" class="field"></p>
+          <div class="set-row">
+            <label for="add-keep" data-i18n="result.add.keep">放完一块接着放</label>
+            <input id="add-keep" class="switch" type="checkbox">
+          </div>
+          <p class="note" data-i18n="result.add.keepNote">关着时，放下一块就回到「选择」，选中刚放的那块；按住 Shift 再点，这一次也接着放。</p>
+          <div class="add-row">
+            <button id="add-rotate" type="button" class="button" data-i18n="result.add.rotate">转 90°</button>
+            <button id="add-start" type="button" class="button" aria-pressed="false">放到模型上</button>
+          </div>
+          <p id="add-status" class="note" role="status"></p>
+        </section>
+      </div>
+      <div class="tool-panel" data-tool-panel="paint" hidden>
+        <section class="panel-card">
+          <h3 class="group-h" data-i18n="result.paint.title">用哪种颜色</h3>
+          <div id="paint-colours" class="add-colours" role="group" aria-label="颜色" data-i18n-aria="result.add.colour"></div>
+          <p id="paint-current" class="field"></p>
+          <p class="note" data-i18n="result.paint.hint">选一种颜色，再一块一块点模型上的零件。LEGO 没出过这种零件的这个颜色时，那一块不换，下面会说。</p>
+        </section>
+      </div>
+      <div class="tool-panel" data-tool-panel="move" hidden>
+        <section class="panel-card">
+          <p class="note" data-i18n="result.move.toolHint">点模型上的一块零件把它拿起来，移到新位置再点一下放下；按 Esc 放回原处。</p>
+        </section>
+      </div>
+      <div class="tool-panel" data-tool-panel="delete" hidden>
+        <section class="panel-card">
+          <p class="note" data-i18n="result.delete.hint">点模型上的零件，一块一块删掉；上面压着别的零件的删不了。删错了按「撤销」。</p>
+        </section>
+      </div>
+      <!-- What the last tap of 上色 / 移动 / 删除 did, or why it did nothing. -->
+      <p id="tool-status" class="drawer-note" role="status" hidden></p>
+      <div class="tool-panel" data-tool-panel="history" hidden>
+        <section class="panel-card">
+          <h3 class="group-h" data-i18n="result.hist.title">编辑记录</h3>
+          <ol id="edit-history" class="edit-history"></ol>
+          <p id="edit-history-empty" class="note" data-i18n="result.hist.empty">还没有改过零件。</p>
+          <p class="note" data-i18n="result.hist.note">点一步，模型就回到这一步做完时的样子；后面的步骤还留着，可以再点回去，或者按「重做」。</p>
+        </section>
+      </div>
+    </div>
+
+  </div>
+</aside>
+<!-- The instruction book: pages are drawn one by one into this dialog (ui/result/book.mjs). -->
+<dialog id="book" class="book" aria-labelledby="book-title">
+  <div class="book-head">
+    <h2 id="book-title" data-i18n="book.title">搭建说明书</h2>
+    <p id="book-status" class="book-status" role="status"></p>
+    <button id="book-stop" type="button" class="button" data-i18n="book.stop">停下</button>
+    <button id="book-pdf" type="button" class="button" hidden data-i18n="book.pdf">下载 PDF</button>
+    <button id="book-close" type="button" class="library-close" aria-label="关闭" data-i18n-aria="book.close">×</button>
+  </div>
+  <div id="book-pages" class="book-pages"></div>
+</dialog>

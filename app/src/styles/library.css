@@ -1,0 +1,11 @@
+/* Sample library: a modal dialog; closes by ×, a click outside it, or Esc. */
+.library { width: min(980px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); padding: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); color: var(--ink); box-shadow: 0 12px 40px #0003; }
+.library::backdrop { background: #1d1a1499; }
+.library-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px 12px 20px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.library-head h2 { margin: 0; font-size: 19px; }
+.library-close { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer; }
+.library-close:hover { background: var(--soft); }
+.library-body { padding: 4px 20px 24px; }
+.library-body h3 { font-size: 16px; margin: 18px 0 10px; }
+.library .cards { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+body:has(.library[open]) .start { overflow: hidden; }

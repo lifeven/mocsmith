@@ -1,0 +1,59 @@
+{
+  "capturedAt": "2026-10-15T19:25:29.153Z",
+  "sourceTreeSha256": "28a43e77b194e2a870d8d021555eecdf72eda8e304d9ae6ee2dab875bc761154",
+  "source": "Running MOCsmith production preview, Chromium with software WebGL",
+  "files": [
+    {
+      "path": "app/public/social/mocsmith-desktop.jpg",
+      "sha256": "6832cb3a29140829f024edc7fd82b96c1a15ab0970f69afb66eeddfb10d8619e",
+      "bytes": 60852
+    },
+    {
+      "path": "docs/media/build.gif",
+      "sha256": "d7c7123c9a97fc5518588540715160a00ad66ab035bdf0047323b6fc2b208914",
+      "bytes": 2062462
+    },
+    {
+      "path": "docs/media/build.mp4",
+      "sha256": "fa84bde45d44fc276c1aebaf90941a09193e9a0084edb72344a71b90ff803350",
+      "bytes": 431264
+    },
+    {
+      "path": "docs/media/building.webp",
+      "sha256": "beeb633c4e7a35fa7c944e7cc2271f504c28bab1f0ee539db866901091b09e2d",
+      "bytes": 29652
+    },
+    {
+      "path": "docs/media/editing.webp",
+      "sha256": "7d08f5ec6185176a6593dff291b096b675d1cd38524278dcc43b4cc8c8432b11",
+      "bytes": 65148
+    },
+    {
+      "path": "docs/media/editor.webp",
+      "sha256": "b2d7b94ea6e0fdeb190253748daa625660996274c5d97ff333c2c5ea4248f604",
+      "bytes": 44496
+    },
+    {
+      "path": "docs/media/instructions.webp",
+      "sha256": "10c287c961dbf85f6f699d2f1aebedf50df7d4bbf23b33a6e3b2ea94105a67ca",
+      "bytes": 27314
+    },
+    {
+      "path": "docs/media/inventory.webp",
+      "sha256": "dd2c1df513951ea2a5e9758429bc90b538591443c6d75317f165efff7c293d95",
+      "bytes": 137856
+    },
+    {
+      "path": "docs/media/mosaic.webp",
+      "sha256": "5a373e6008dd2abcb4ef128f5269cf55954fe18e36025cfba893baf03dcbba22",
+      "bytes": 178642
+    },
+    {
+      "path": "docs/media/relief.webp",
+      "sha256": "5f7a90732573ce58254d59227a2217ac6a348cd523a767e4368546de1601de07",
+      "bytes": 92744,
+      "capture": "Real optional depth inference on the bundled Labrador sample"
+    }
+  ],
+  "sampleCredits": "Chick: Kenney Cube Pets, CC0 1.0. Labrador: Dktue, CC0 1.0. See docs/credits.md."
+}

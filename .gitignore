@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.wrangler/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+.agents/
+.codex/
+
+# Local browser-test evidence.
+/app/test-results/
+/app/playwright-report/

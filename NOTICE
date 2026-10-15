@@ -1,0 +1,98 @@
+MOCsmith (积木匠)
+Copyright (C) 2026 LifeVen LLC
+
+MOCsmith turns a 3D model into a brick model you could build (parts,
+colours, building steps, a PDF instruction book) and a photo into a flat
+brick mosaic, all in the browser.
+
+
+LICENCES
+
+  Code: everything under app/, except the third-party
+  material listed below, is licensed under the GNU Affero General Public
+  License, version 3 only (AGPL-3.0-only), with the additional terms
+  below. Full text: LICENSE.
+
+  Documents and pictures: the README files and everything
+  under docs/ are licensed under Creative Commons Attribution 4.0
+  International (CC BY 4.0). Full text: LICENSE-docs. Credit them as
+  "MOCsmith by LifeVen LLC, CC BY 4.0", with a link to the original
+  project.
+
+  "The original project" in this file means the repository
+  https://github.com/lifeven/mocsmith.
+
+
+ADDITIONAL TERMS UNDER SECTION 7 OF THE AGPL-3.0
+
+These terms apply to every copy and every modified version of the code.
+Section 7 of the AGPL-3.0 allows both of them, in its paragraphs (b) and
+(e).
+
+  1. Credit (section 7(b)). Every version that shows a user interface,
+     including one that people use over a network, must keep, in its
+     About or credits page, the copyright notice above and the words
+     "Based on MOCsmith by LifeVen LLC" with a link to the original
+     project. You may change the wording around it and where the page is,
+     as long as people using the site can see it without reading the
+     source code.
+
+  2. Names (section 7(e)). This licence gives no rights to the names
+     "MOCsmith", "积木匠" or "LifeVen". If you publish a modified version,
+     please give it a different name so people can tell the two apart.
+     You may still say, truthfully, that your version is based on
+     MOCsmith.
+
+
+TRADEMARKS
+
+LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise
+or endorse this project. Set names, part numbers and set pictures refer to
+LEGO products only to identify the parts and compatible inventories.
+Official set photographs are not included or requested by the app.
+
+
+THIRD-PARTY MATERIAL
+
+  Libraries bundled into the site (three.js, jsPDF and what it bundles,
+  Lucide icons, ONNX Runtime Web): app/public/third-party-notices.txt and
+  app/public/onnxruntime-third-party-notices.txt, which ship with the
+  site.
+
+  Sample models and pictures in app/public/samples/: each keeps its own
+  licence (CC0, CC BY 4.0, or public domain), listed with its source in
+  app/public/samples/README.md and on the site's About page.
+
+  Data: which parts were made in which colours, and what is in each set,
+  comes from Rebrickable's data downloads (each JSON file in app/src/data/
+  and app/public/data/ names its source). Part numbers and colour values follow
+  the LDraw.org parts library and LDConfig.ldr (CC BY 2.0 / CC BY 4.0).
+  No LDraw part geometry is stored here.
+
+  Depth model: the mosaic's 2.5D option downloads Depth Anything V2 Small
+  (Apache-2.0) from Hugging Face at run time; it is not stored here.
+
+
+WORK THIS PROJECT BUILDS ON
+
+  - app/src/convert/slopes.mjs follows the slope-profile rule of
+    legolization by Harold Martin (https://github.com/hbmartin/legolization,
+    GPL-3.0-or-later), rewritten in JavaScript with different data structures.
+    AGPL-3.0 section 13 allows combining this project with GPL-3.0 work.
+  - "Match a picture to a fixed set of parts" (app/src/mosaic/stock.mjs)
+    and the 2.5D mosaic idea (app/src/mosaic/relief.mjs) come from
+    lego-art-remix by Deb Banerji
+    (https://github.com/debkbanerji/lego-art-remix, GPL-3.0); the code
+    here was written separately.
+  - Rejoining loose parts (app/src/convert/repair.mjs) takes its idea from
+    Brickify by Adrian Sieber
+    (https://github.com/ad-si/Brickify, AGPL-3.0-or-later); no code from
+    it is used.
+  - Papers: M. Agrawala et al., "Designing Effective Step-By-Step Assembly
+    Instructions", SIGGRAPH 2003 (building steps); R. Ramamoorthi and
+    P. Hanrahan, "An Efficient Representation for Irradiance Environment
+    Maps", SIGGRAPH 2001 (removing baked lighting); G. Sharma, W. Wu and
+    E. N. Dalal, "The CIEDE2000 Color-Difference Formula", 2005;
+    B. Ottosson, "A perceptual color space for image processing" (OKLab),
+    2020; R. W. Floyd and L. Steinberg, "An Adaptive Algorithm for
+    Spatial Greyscale", 1976 (dithering).

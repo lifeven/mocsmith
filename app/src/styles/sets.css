@@ -1,0 +1,19 @@
+/* "Add a set" (ui/set-picker.mjs), shared by the 3D result page and the mosaic page. */
+.own-search { width: 100%; min-height: 40px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font: inherit; font-size: 14px; }
+.own-results, .own-list { list-style: none; margin: 6px 0; padding: 0; display: grid; gap: 4px; }
+.own-hit { width: 100%; min-height: 40px; padding: 6px 10px; display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+.own-hit:hover, .own-hit:focus-visible { border-color: var(--ink); }
+.own-hit small, .own-name small { display: block; font-size: 12px; color: var(--muted); }
+.own-row { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.own-name, .own-hit > span:not(.own-pic) { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+/* An added set: symbol | name over − copies + | × */
+.own-row.set { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; column-gap: 10px; row-gap: 4px; align-items: center; }
+.own-row.set .own-pic { grid-column: 1; grid-row: 1 / span 2; }
+.own-row.set .own-name { grid-column: 2; grid-row: 1; }
+.own-row.set .own-copies { grid-column: 2; grid-row: 2; }
+.own-row.set [data-drop] { grid-column: 3; grid-row: 1 / span 2; }
+/* Local set symbol; product photographs are not requested. */
+.own-pic { display: grid; place-items: center; color: var(--muted); width: 40px; height: 40px; flex: none; object-fit: contain; border-radius: 6px; background: var(--soft); }
+.own-copies { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.icon-button { width: 32px; height: 32px; flex: none; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font: inherit; font-size: 16px; line-height: 1; cursor: pointer; }
+.icon-button:disabled { color: var(--muted); background: transparent; cursor: not-allowed; }

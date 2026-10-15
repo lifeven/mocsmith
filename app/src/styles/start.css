@@ -1,0 +1,90 @@
+/* Start page, mobile-first: one column on phones; from 560px three sample columns,
+   from 820px the narrow "see all" column, two entries side by side and the four mosaic examples in one row.
+   The section itself scrolls (full width, so the scrollbar is at the window edge);
+   .start-inner centres the content. */
+.start { position: relative; height: 100%; overflow-y: auto; } /* relative: hidden file inputs stay inside the scroller */
+.start-inner { max-width: 1120px; margin: 0 auto; padding: 20px 16px 40px; }
+
+/* Hero: title and one line, no picture */
+.hero h1 { font-size: clamp(26px, 6vw, 40px); line-height: 1.2; letter-spacing: -0.01em; margin: 8px 0 10px; }
+.hero .lead { color: var(--muted); font-size: 16px; margin: 0; max-width: 34em; }
+
+/* Blocks */
+.block { margin-top: 36px; }
+.block > h2, .mosaic-intro h2 { font-size: 20px; margin: 0 0 14px; }
+
+/* Sample cards: picture and name */
+.samples { display: grid; gap: 14px; }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card { display: block; height: 100%; text-decoration: none; color: inherit; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: transform .15s, box-shadow .15s; }
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px #0000000f; }
+.card img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: var(--soft); }
+.card-title { display: block; padding: 10px 14px 12px; font-weight: 600; }
+/* "See all": a full row on phones, a narrow column beside the cards on wide screens. */
+.see-all { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 12px 16px; border: 1px dashed #cfc6b4; border-radius: 14px; background: transparent; color: var(--ink); font: inherit; font-weight: 600; text-align: center; cursor: pointer; }
+.see-all:hover { background: var(--panel); border-style: solid; }
+/* Break only between words ("查看全部 / 36 个示例"), never inside one. */
+#see-all-label { word-break: keep-all; }
+.see-all .arrow { font-size: 18px; }
+
+/* Use your own */
+.entries { display: grid; gap: 14px; }
+.entry { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
+.entry-title { margin: 0; font-size: 17px; }
+.entry-note { margin: 0; font-size: 14px; color: var(--muted); }
+/* Trademark small print at the foot of the start page. */
+.start-inner > .legal { margin: 40px 0 8px; font-size: 12px; color: var(--muted); }
+.entry-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 6px; }
+.entry > .entry-actions { margin-top: auto; padding-top: 6px; } /* buttons line up at the bottom of side-by-side cards */
+.entry-actions label.button { display: inline-flex; align-items: center; cursor: pointer; }
+.entry-actions label.button.off { background: transparent; border-style: dashed; border-color: currentColor; color: var(--muted); font-weight: 500; cursor: not-allowed; } /* its input is disabled */
+.button.quiet { border-color: transparent; background: transparent; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; padding-inline: 8px; }
+.button.quiet[aria-expanded="true"] { text-decoration: none; background: var(--soft); }
+.picture-preview { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); }
+.prompt { margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.prompt summary { cursor: pointer; font-size: 14px; padding: 6px 0; } /* not flex: that hides the ▸ marker */
+.prompt-text { white-space: pre-wrap; font-size: 12px; line-height: 1.45; background: var(--soft); color: var(--ink); padding: 10px; border-radius: 8px; max-height: 260px; overflow: auto; margin: 4px 0 0; }
+/* Title with a status tag beside it; the tag drops below when the row is too narrow, so it never covers the title. */
+.entry-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; }
+.tag { font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--soft); color: var(--muted); white-space: nowrap; }
+.status { margin: 8px 0 0; color: var(--muted); }
+.status:empty { margin: 0; }
+
+/* Photo → flat mosaic */
+.mosaic-block { display: grid; gap: 20px; padding: 22px 20px; border-radius: 18px; background: var(--panel); border: 1px solid var(--line); }
+.mosaic-intro .entry-note { max-width: 44em; }
+/* Title and note, with the button beside them on wide screens. */
+.mosaic-intro { display: grid; gap: 8px 24px; align-items: center; }
+.mosaic-intro h2 { margin: 0; }
+.mosaic-intro .entry-actions { margin: 0; }
+.mosaic-examples-wrap h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.mosaic-examples { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mosaic-example { display: flex; flex-direction: column; gap: 8px; padding: 8px 8px 10px; border-radius: 14px; border: 1px solid var(--line); background: var(--paper); color: inherit; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+.mosaic-example:hover { transform: translateY(-2px); box-shadow: 0 8px 22px #0000000f; }
+/* The mosaic fills the frame; the original photo sits small in a corner. */
+.mosaic-frame { position: relative; display: block; }
+.mosaic-frame .preview { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 10px; background: #05131d; }
+.mosaic-frame .inset { position: absolute; right: 8px; bottom: 8px; width: 30%; height: auto; aspect-ratio: 1; object-fit: cover; border: 3px solid #fff; border-radius: 8px; box-shadow: 0 2px 8px #0004; }
+.mosaic-example .name { padding: 0 4px; font-weight: 600; }
+
+
+@media (min-width: 560px) {
+  .samples .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 820px) {
+  .start-inner { padding: 32px 28px 48px; }
+  .samples { grid-template-columns: minmax(0, 1fr) 132px; }
+  .see-all { flex-direction: column; }
+  .entries { grid-template-columns: 1fr 1fr; }
+  .mosaic-block { padding: 28px; }
+  .mosaic-intro { grid-template-columns: minmax(0, 1fr) auto; }
+  .mosaic-intro .entry-actions, .mosaic-intro .status { grid-column: 2; grid-row: 1 / span 2; justify-self: end; }
+  .mosaic-intro .status { grid-row: 3; }
+  .mosaic-examples { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .mosaic-example { transition: none; }
+  .card:hover, .mosaic-example:hover { transform: none; }
+}

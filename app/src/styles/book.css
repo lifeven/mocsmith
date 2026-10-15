@@ -1,0 +1,28 @@
+/* Instruction book preview: a modal dialog with the pages one below the other; closes by ×, a click outside it, or Esc. */
+.book { width: min(900px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--soft); color: var(--ink); box-shadow: 0 12px 40px #0003; }
+.book::backdrop { background: #1d1a1499; }
+.book-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 20px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.book-head h2 { margin: 0; font-size: 19px; white-space: nowrap; }
+.book-status { flex: 1; margin: 0; font-size: 14px; color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.book-head .button { flex: none; font-size: 14px; }
+.book-pages { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 16px; }
+/* A4 pages keep their shape; on a phone a page is as wide as the dialog. */
+.book-pages img { display: block; width: min(100%, 720px); aspect-ratio: 1240 / 1754; height: auto; background: #fff; box-shadow: 0 1px 6px #0002; border-radius: 2px; }
+body:has(.book[open]) { overflow: hidden; }
+@media (max-width: 560px) {
+  .book-head { padding: 8px 8px 8px 14px; gap: 8px; }
+  .book-head h2 { font-size: 17px; }
+  .book-pages { padding: 8px; gap: 8px; }
+}
+/* Printing with the book open (the fallback when the PDF cannot be made): only the pages, one per sheet. */
+@page { size: A4 portrait; margin: 0; }
+@media print {
+  body:has(.book[open]) > :not(main), main:has(.book[open]) > :not(#result), #result:has(.book[open]) > :not(.book) { display: none !important; }
+  html:has(.book[open]), body:has(.book[open]), main:has(.book[open]), #result:has(.book[open]) { display: block; height: auto; overflow: visible; background: #fff; }
+  /* book.mjs reopens the dialog as non-modal for printing (a modal one sits in the top layer, out of the page flow, so only one sheet would print). */
+  .book[open] { position: static; margin: 0; width: auto; max-width: none; max-height: none; border: 0; border-radius: 0; box-shadow: none; background: #fff; overflow: visible; }
+  .book[open]::backdrop { display: none; }
+  .book-head { display: none; }
+  .book-pages { display: block; padding: 0; }
+  .book-pages img { width: 210mm; height: 297mm; box-shadow: none; border-radius: 0; break-after: page; }
+}

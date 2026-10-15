@@ -1,0 +1,82 @@
+<!-- #start page markup, mounted into <section id="start"> by src/ui/pages.mjs. -->
+<div class="start-inner">
+  <header class="hero">
+    <h1 id="start-title" data-i18n="start.title">把一个 3D 模型变成能搭的积木</h1>
+    <p class="lead" data-i18n="start.lead">选一个示例，或者放进你自己的模型。换大小、改颜色、一步一步搭，都在这个网页里完成。</p>
+  </header>
+
+  <section class="block" aria-labelledby="samples-title">
+    <h2 id="samples-title" data-i18n="start.samples">先看个示例</h2>
+    <div class="samples">
+      <ul id="sample-cards" class="cards"></ul>
+      <button id="open-library" type="button" class="see-all" aria-haspopup="dialog">
+        <span id="see-all-label"></span><span class="arrow" aria-hidden="true">→</span>
+      </button>
+    </div>
+  </section>
+  <dialog id="library" class="library" aria-labelledby="library-title">
+    <div class="library-head">
+      <h2 id="library-title" data-i18n="library.title">示例库</h2>
+      <button id="library-close" type="button" class="library-close" aria-label="关闭" data-i18n-aria="library.close">×</button>
+    </div>
+    <div id="library-body" class="library-body"></div>
+  </dialog>
+
+  <section class="block" aria-labelledby="own-title">
+    <h2 id="own-title" data-i18n="start.own">用你自己的</h2>
+    <div class="entries">
+      <div class="entry">
+        <h3 class="entry-title" data-i18n="start.file.title">我有模型文件</h3>
+        <p class="entry-note" data-i18n="start.file.note">.glb 3D 模型（"图片转 3D"网站做的都行），或者 Studio、LeoCAD 存的 .ldr / .mpd 积木模型。</p>
+        <div class="entry-actions">
+          <label class="button primary" for="upload" data-i18n="start.file.button">选择文件</label>
+          <input id="upload" type="file" accept=".glb,model/gltf-binary,.ldr,.mpd" class="visually-hidden">
+        </div>
+      </div>
+      <div class="entry picture">
+        <div class="entry-head">
+          <h3 class="entry-title" data-i18n="start.image.title">我有积木风格的 AI 图片</h3>
+          <span class="tag" data-i18n="start.wip">开发中</span>
+        </div>
+        <p class="entry-note" data-i18n="start.image.note">上传一张图，先变成 3D，再变成积木。图转 3D 还没接上，现在还不能上传。</p>
+        <p class="entry-note" data-i18n="start.image.tips">一张图只放一个东西，东西要完整、背景干净，不要强烈的反光和阴影。</p>
+        <img id="picture-preview" class="picture-preview" alt="" data-i18n-alt="start.image.preview" hidden>
+        <div class="entry-actions">
+          <!-- Off until an image-to-3D service is connected: the disabled input
+               cannot be focused or opened, so the label does nothing either. -->
+          <label class="button primary off" for="upload-picture" data-i18n="start.image.button">上传图片</label>
+          <input id="upload-picture" type="file" accept="image/*" class="visually-hidden" disabled>
+          <button id="no-picture" type="button" class="button quiet" aria-expanded="false" aria-controls="prompt-box" data-i18n="start.image.none">还没有图片？</button>
+        </div>
+        <div id="prompt-box" class="prompt" hidden>
+          <p class="entry-note" data-i18n="start.prompt.what">把这段英文贴到 AI 画图工具里，把方括号换成你想搭的东西。</p>
+          <div class="entry-actions">
+            <button id="copy-prompt" type="button" class="button" data-i18n="start.prompt.copy">复制提示词</button>
+          </div>
+          <details>
+            <summary data-i18n="start.prompt.show">看全文</summary>
+            <pre id="prompt-text" class="prompt-text"></pre>
+          </details>
+        </div>
+      </div>
+    </div>
+    <p id="start-status" class="status" role="status"></p>
+  </section>
+
+  <section class="block mosaic-block" aria-labelledby="mosaic-block-title">
+    <div class="mosaic-intro">
+      <h2 id="mosaic-block-title" data-i18n="start.mosaic.title">照片拼成平面画</h2>
+      <p class="entry-note" data-i18n="start.mosaic.note">像 LEGO® Art 挂画那样，用 1×1 的圆片或方片拼一幅画。</p>
+      <div class="entry-actions">
+        <label class="button primary" for="upload-mosaic" data-i18n="start.mosaic.button">用我的照片</label>
+        <input id="upload-mosaic" type="file" accept="image/*" class="visually-hidden">
+      </div>
+      <p id="mosaic-status" class="status" role="status"></p>
+    </div>
+    <div id="mosaic-examples-wrap" class="mosaic-examples-wrap" hidden>
+      <h3 data-i18n="start.mosaic.examples">或者先试试这几张</h3>
+      <ul id="mosaic-examples" class="mosaic-examples"></ul>
+    </div>
+  </section>
+  <p class="legal" data-i18n="legal.trademark">LEGO® 是乐高集团的商标，乐高集团没有赞助、授权或认可本网站。</p>
+</div>

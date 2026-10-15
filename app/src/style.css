@@ -1,0 +1,12 @@
+/* Styles: tokens and base first, then the shell, then one file per page (src/styles/). */
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/components.css';
+@import './styles/layout.css';
+@import './styles/start.css';
+@import './styles/library.css';
+@import './styles/about.css';
+@import './styles/result.css';
+@import './styles/sets.css';
+@import './styles/book.css';
+@import './styles/mosaic.css';

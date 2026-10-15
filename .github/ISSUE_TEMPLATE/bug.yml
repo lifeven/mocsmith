@@ -1,0 +1,30 @@
+name: Bug report
+description: Report a reproducible conversion, editing, export or interface problem.
+body:
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include the sample route or a small file you have permission to share.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Expected and actual result
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Browser version, operating system and screen size
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Files and privacy
+      options:
+        - label: I have removed private information and have permission to share the attached files.
+          required: true

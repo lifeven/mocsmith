@@ -1,0 +1,7 @@
+/* About page: the section scrolls full width, the text is centred. */
+.about { position: relative; height: 100%; overflow-y: auto; line-height: 1.6; }
+.about-inner { max-width: 760px; margin: 0 auto; padding: 28px 20px 48px; }
+.about h1 { font-size: 26px; margin: 0 0 12px; }
+.about h3 { font-size: 16px; margin: 22px 0 6px; }
+.about ul { padding-left: 20px; margin: 4px 0; }
+.about li { margin: 4px 0; }

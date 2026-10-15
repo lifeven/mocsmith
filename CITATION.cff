@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use or build on MOCsmith, please cite it as below."
+title: "MOCsmith (积木匠)"
+abstract: >-
+  A browser app that turns a 3D model into a brick model you could build
+  (parts, colours, building steps, a PDF instruction book), and a photo
+  into a flat brick mosaic.
+type: software
+authors:
+  - name: "LifeVen LLC"
+license: AGPL-3.0-only
+repository-code: "https://github.com/lifeven/mocsmith"
+url: "https://github.com/lifeven/mocsmith"
+version: "0.1.0"
+date-released: "2026-10-15"
+keywords:
+  - bricks
+  - voxel
+  - MOC
+  - mosaic
+  - building instructions

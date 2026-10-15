@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" data-i18n-content="page.description" content="把一个 3D 模型变成能搭的积木模型：换大小、改颜色、一步一步搭、和原来的模型对比。全部在浏览器里完成。">
+  <title data-i18n="page.title">积木匠 MOCsmith</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <header class="bar">
+    <a class="brand" href="/"><span data-i18n="brand.name">MOCsmith</span></a>
+    <div class="bar-end">
+      <a id="back" class="back" href="/" hidden data-i18n="nav.back">← 换一个</a>
+      <a id="about-link" class="nav-link" href="/about/" data-i18n="nav.about">关于</a>
+      <div id="lang-switch" class="lang-switch" role="group" aria-label="语言" data-i18n-aria="lang.label"></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="start" class="page start" aria-labelledby="start-title"></section>
+
+    <section id="mosaic" class="page mosaic" hidden aria-labelledby="mosaic-title"></section>
+
+    <section id="about" class="page about" hidden aria-labelledby="about-title"></section>
+
+    <section id="result" class="page result" hidden aria-labelledby="model-title"></section>
+  </main>
+
+  <footer class="site-credit"><span>By LifeVen</span></footer>
+
+  <script type="module" src="./src/main.mjs"></script>
+</body>
+</html>

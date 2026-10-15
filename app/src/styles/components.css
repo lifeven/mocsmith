@@ -1,0 +1,58 @@
+/* Shared panel components: section cards, count chips, segmented controls and switches.
+ * Used by the 3D result page and the mosaic page side panels. */
+
+/* A section card (.panel-card; .card is the start page's sample tile): heading row (icon, title, something on the right), then its content. */
+.panel-card { background: var(--card); border: 1px solid var(--card-line); border-radius: var(--card-radius); box-shadow: var(--shadow-card); padding: 14px; }
+.panel-card + .panel-card { margin-top: 12px; }
+.panel-card-h { display: flex; align-items: center; gap: 8px; min-height: 28px; margin: 0 0 10px; }
+.panel-card-h h2 { display: flex; align-items: baseline; gap: 6px; margin: 0; font-size: var(--fs-body); font-weight: 650; }
+.panel-card-h h2 .muted { font-size: 13px; }
+.panel-card-h .ico { flex: none; color: var(--muted); }
+.panel-card-h .end { margin-left: auto; }
+.panel-card .note:last-child { margin-bottom: 0; }
+
+/* Count chips under a title: "210 块 · 3 种颜色 · 19 × 3 × 10 厘米" as separate tags (.stat; .chip is the build-mode step tag). */
+.stats { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
+.stat { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; background: var(--soft); color: var(--ink); font-size: var(--fs-small); white-space: nowrap; }
+.stat b { font-weight: 650; font-variant-numeric: tabular-nums; }
+
+/* Segmented control: one pill track, the chosen option raised in white.
+ * Options are buttons with aria-pressed; an optional <small> line goes under the label. */
+.seg { display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; gap: 2px; padding: 3px; border-radius: 12px; background: var(--soft); }
+.seg button { min-width: 0; min-height: 40px; padding: 6px 6px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font: inherit; font-size: var(--fs-body); line-height: 1.25; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.seg button small { max-width: 100%; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; font-size: 11.5px; color: var(--muted); font-weight: 400; white-space: nowrap; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: #fff; color: var(--ink); font-weight: 650; box-shadow: 0 1px 2px #0000001f, 0 1px 1px #0000000d; }
+.seg button:disabled { color: #b3ab9c; cursor: not-allowed; }
+
+/* Switch: a real checkbox drawn as a track and knob (keyboard, forms and screen readers keep working). */
+input.switch { appearance: none; -webkit-appearance: none; flex: none; position: relative; width: 40px; height: 24px; margin: 0; border-radius: 999px; background: #d8d1c2; cursor: pointer; transition: background .15s; }
+input.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px #0000004d; transition: transform .15s; }
+input.switch:checked { background: var(--ink); }
+input.switch:checked::after { transform: translateX(16px); }
+input.switch:disabled { opacity: .45; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) { input.switch, input.switch::after { transition: none; } }
+@media (forced-colors: active) { input.switch { border: 1px solid CanvasText; } input.switch::after { background: CanvasText; } }
+
+/* A setting row: what it does on the left, an optional 「?」 and the switch on the right; the
+ * explanation (.help) opens under the row from the 「?」 (ui/help.mjs). */
+.set-row { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.set-row + .set-row, .help + .set-row { border-top: 1px solid var(--line); }
+.set-row > label { flex: 1; min-width: 0; font-size: var(--fs-body); cursor: pointer; }
+.set-row .dot { margin-right: 6px; }
+.help-toggle { flex: none; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--muted); cursor: pointer; }
+.help-toggle:hover, .help-toggle[aria-expanded="true"] { background: var(--soft); color: var(--ink); }
+.help { margin: 0 0 10px; padding: 8px 10px; border-radius: 10px; background: var(--soft); color: var(--ink); font-size: var(--fs-small); line-height: 1.5; }
+.help ul { margin: 0; padding-left: 18px; }
+.help p { margin: 0 0 4px; }
+.set-h { display: flex; align-items: center; gap: 4px; margin: 0 0 8px; }
+.set-h .group-h, .set-h .field { margin: 0; flex: 1; }
+
+/* Pills: checkboxes drawn as tags you tick (the checkbox stays, hidden, for keyboard and screen readers). */
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 4px 14px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: var(--fs-body); cursor: pointer; }
+.pill input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.pill:has(input:checked) { border-color: var(--ink); background: var(--ink); color: #fff; font-weight: 600; }
+.pill:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pill .pill-check { display: none; }
+.pill:has(input:checked) .pill-check { display: block; }

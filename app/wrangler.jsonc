@@ -1,0 +1,20 @@
+// Cloudflare Workers static assets: the built site (dist/) served as-is, with no Worker script.
+// Deploy with `npm run deploy` (builds first). Response headers are in public/_headers.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "mocsmith",
+  "compatibility_date": "2026-10-09",
+  // No usage telemetry from this project's Wrangler runs.
+  "send_metrics": false,
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    // Every public route has an entry page; unknown paths return a real 404.
+    "not_found_handling": "404-page"
+  },
+  // Forks should replace this domain before deploying.
+  "routes": [
+    { "pattern": "mocsmith.lifeven.com", "custom_domain": true }
+  ]
+}

@@ -1,0 +1,38 @@
+/* App shell: the top bar and the language switch. */
+/* Top bar */
+.bar { height: var(--bar-h); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid var(--line); background: var(--panel); flex: none; }
+.brand { color: var(--ink); text-decoration: none; font-weight: 700; font-size: 17px; }
+.back { color: var(--ink); text-decoration: none; padding: 10px 12px; border-radius: 8px; }
+.back:hover { background: var(--soft); }
+.nav-link { color: var(--ink); text-decoration: none; padding: 8px 12px; border-radius: 8px; font-size: 14px; white-space: nowrap; }
+.nav-link:hover, .nav-link[aria-current="page"] { background: var(--soft); }
+.bar-end { display: flex; align-items: center; gap: 8px; }
+/* Language switch: a segmented control, the current language filled in. */
+.lang-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.lang-switch button { min-height: 32px; min-width: 44px; padding: 4px 10px; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; white-space: nowrap; cursor: pointer; }
+.lang-switch button + button { border-left: 1px solid var(--line); }
+.lang-switch button:hover { background: var(--soft); color: var(--ink); }
+.lang-switch button[aria-pressed="true"] { background: var(--ink); color: #fff; font-weight: 600; }
+
+
+/* Narrow phones: brand, back link and language switch on one line in every language. */
+@media (max-width: 520px) {
+  .bar { padding: 0 12px; gap: 8px; }
+  .brand { font-size: 15px; white-space: nowrap; }
+  .bar-end { gap: 4px; }
+  .back { padding: 8px; font-size: 14px; white-space: nowrap; }
+  .nav-link { padding: 8px; }
+  .lang-switch button { min-width: 40px; padding: 4px 8px; }
+  .brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+}
+/* The smallest phones (360 px): the English bar is a few pixels too wide otherwise. */
+@media (max-width: 380px) {
+  .bar { padding: 0 8px; gap: 4px; }
+  .brand { font-size: 14px; }
+  .back, .nav-link { padding: 6px; }
+  .lang-switch button { min-width: 34px; padding: 4px 6px; }
+}
+
+/* A reserved footer row keeps the credit clear of the canvas and its controls. */
+.site-credit { flex: none; display: flex; justify-content: flex-end; align-items: center; min-height: 20px; padding: 0 max(12px, env(safe-area-inset-right)) env(safe-area-inset-bottom); color: var(--muted); background: var(--paper); font-size: 11px; line-height: 20px; }
+.shot .site-credit { display: none; }

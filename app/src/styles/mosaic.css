@@ -1,0 +1,61 @@
+/* Mosaic page: laid out like the 3D result page. The name card, the photo and the mosaic side by side,
+ * a toolbar under them (.tools, result.css), and an open drawer as a column on the right (below on phones). */
+.mosaic { display: grid; grid-template-columns: minmax(0, 1fr); height: 100%; }
+.mosaic.drawer-open { grid-template-columns: minmax(0, 1fr) 390px; }
+.mosaic-stage { position: relative; min-height: 0; display: flex; flex-direction: column; }
+.mosaic-stage > .name-card { order: 0; flex: none; align-self: flex-start; margin: 16px 20px 0; max-width: min(560px, calc(100% - 40px)); }
+.mosaic-stage .details-pop { left: 0; right: auto; }
+.mosaic-stage .details-pop .drawer-close { position: absolute; top: 4px; right: 4px; }
+.mosaic-stage .details-pop .note { margin: 10px 0 0; }
+.mosaic-view { flex: 1; min-height: 0; overflow: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-content: start; padding: 16px 20px 96px; }
+.mosaic-pane { margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.mosaic-pane figcaption { font-size: 13px; color: var(--muted); }
+.mosaic-pane canvas { display: block; width: 100%; height: auto; max-height: calc(100vh - var(--bar-h) - 240px); object-fit: contain; object-position: left top; border-radius: 6px; background: var(--soft); }
+/* Framing a part of the photo (frame.mjs): the canvas takes drags instead of scrolling */
+.frame-tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.frame-tools .button { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+.frame-tools .button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.mosaic-view.framing #mosaic-source { touch-action: none; cursor: crosshair; }
+.mosaic-pane .note { margin: 0; }
+
+/* Drawer contents */
+.mosaic .drawer .seg + .note { margin-top: 10px; }
+.mosaic .drawer .base-h { margin-top: 16px; }
+.tiers.two { grid-template-columns: repeat(2, 1fr); }
+.tiers.two button { font-size: 14px; }
+.tiers.one { grid-template-columns: 1fr; }
+.tiers.one button { flex-direction: row; justify-content: space-between; gap: 8px; text-align: left; font-size: 14px; }
+.tiers button:disabled { color: var(--muted); background: transparent; border-style: dashed; cursor: not-allowed; }
+.base-parts { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
+.panel-card .seg + .set-h { margin-top: 16px; }
+.mosaic .drawer .note + .field, .mosaic .drawer .relief-busy + .field { margin-top: 12px; }
+.mosaic .drawer .seg + .set-row { margin-top: 8px; }
+li.colour-row { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 2px 0; }
+#mosaic-own-summary { margin-top: -2px; }
+/* LEGO Art sets: a tick, the set's picture (Rebrickable, loaded from their site) and its name; at most about
+ * four and a half rows, then the list scrolls inside (phones too). */
+.art-list { max-height: 236px; overflow-y: auto; overscroll-behavior: contain; margin: 0 0 12px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.art-set { align-items: center; gap: 10px; min-height: 52px; padding: 4px 0; cursor: pointer; }
+.art-set + .art-set { border-top: 1px solid var(--line); }
+.art-set input { margin-top: 0; }
+.art-set .own-pic { width: 40px; height: 40px; }
+.art-set > span:last-child { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+/* A warning under the stock status: the boxes' colours do not suit this photo */
+.note.warn { color: var(--red); font-weight: 600; }
+/* 2.5D: what is downloading or being worked out, a bar and a stop button */
+.relief-busy { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 8px; font-size: 13px; color: var(--muted); }
+.relief-busy span { grid-column: 1 / -1; }
+.relief-busy progress { width: 100%; height: 8px; accent-color: var(--ink); }
+.relief-busy .button { font-size: 14px; min-height: 36px; }
+.exports #mosaic-pdf { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+
+/* Phones and narrow tablets: the pictures on top, an open drawer below them (the toolbar sits on top of it) */
+@media (max-width: 820px) {
+  .mosaic, .mosaic.drawer-open { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+  .mosaic.drawer-open { grid-template-rows: minmax(0, 1fr) auto; }
+  .mosaic-stage > .name-card { margin: 8px 8px 0; max-width: calc(100% - 16px); }
+  .mosaic-view { padding: 10px 12px 76px; gap: 8px; }
+  .mosaic-pane canvas { max-height: 60vh; }
+  /* Framing on a phone: the photo gets the full width, the mosaic goes below it */
+  .mosaic-view.framing { grid-template-columns: 1fr; }
+}
